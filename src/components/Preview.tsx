@@ -1,8 +1,9 @@
+import React from 'react';
 
-const Preview = () => {
+const Preview: React.FC = () => {
   return (
-    <div className="preview">
-      {/* Video preview will go here */}
+    <div className="preview h-64 border flex items-center justify-center">
+      <span>Video Preview</span>
     </div>
   );
 };

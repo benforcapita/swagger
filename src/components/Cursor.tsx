@@ -1,8 +1,9 @@
+import React from 'react';
 
-const Cursor = () => {
+const Cursor: React.FC = () => {
   return (
-    <div className="cursor">
-      {/* Cursor will go here */}
+    <div className="cursor mt-4">
+      <div className="w-1 bg-red-500 h-8"></div>
     </div>
   );
 };
