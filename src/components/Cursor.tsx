@@ -1,9 +1,20 @@
 import React from 'react';
 
-const Cursor: React.FC = () => {
+interface CursorProps {
+  position: number; // Position in seconds
+  trackWidth: number; // Width of the track in pixels
+  totalDuration: number; // Total duration of all scenes in seconds
+}
+
+const Cursor: React.FC<CursorProps> = ({ position, trackWidth, totalDuration }) => {
+  const cursorPosition = (position / totalDuration) * trackWidth;
+
   return (
-    <div className="cursor mt-4">
-      <div className="w-1 bg-red-500 h-8"></div>
+    <div className="relative">
+      <div
+        className="absolute bg-red-500 h-full"
+        style={{ left: `${cursorPosition}px`, width: '2px' }}
+      />
     </div>
   );
 };

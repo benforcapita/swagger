@@ -1,30 +1,31 @@
-# React + TypeScript + Vite
+# Video Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a single-page video editing interface developed using Angular. It allows users to choose, arrange, and trim different video scenes on a track to create a virtual representation of a full video.
 
-Currently, two official plugins are available:
+## General Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. The user will see a list of possible scenes.
+2. The user will be able to preview each of the scenes.
+3. The user will be able to drag-drop scenes to the timeline.
+4. The user will be able to use the same scene several times.
 
-## Expanding the ESLint configuration
+## Track
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. There will be a ruler on top of the track, with a marker on every round second.
+2. The user can rearrange the scenes on the track.
+3. Each scene's length on the track will be proportional to the ruler.
+4. The user will be able to zoom in and out on the X-axis.
+5. The user will be able to play the track from the beginning, one scene after the other.
+6. The user can pause the preview by clicking the 'Pause' button.
 
-- Configure the top-level `parserOptions` property like this:
+## Extras
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+1. The cursor will move to the location of a click on the track (X-axis only).
+2. The video can be played from where the cursor is.
+3. The cursor will move to the current time playing when the video is played.
+4. Clicking to move the cursor while playing the video will update its location and continue playing from that point.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Assumptions
+
+- There is no need for space between scenes on the track.
+- There are no real layers, only a single track.
