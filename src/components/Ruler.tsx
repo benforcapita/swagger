@@ -1,15 +1,26 @@
 import React from 'react';
 
-const Ruler: React.FC = () => {
-  const seconds = Array.from({ length: 15 }, (_, i) => i + 1);
+const Ruler: React.FC<{ totalDuration: number; zoomLevel: number }> = ({ totalDuration, zoomLevel }) => {
+  const markers = [];
+  const markerWidth = 50 * zoomLevel; // Adjust marker spacing based on zoom level
+
+  for (let i = 0; i <= totalDuration; i++) {
+    markers.push(
+      <div
+        key={i}
+        className="flex flex-grow border-r border-gray-300 text-xs text-center items-center justify-center"
+        style={{ width: `${markerWidth}px` }}
+      >
+        <div >
+          {i}s
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="ruler flex mt-4">
-      {seconds.map(second => (
-        <div key={second} className="ruler-second w-8 border-r text-center">
-          {second}s
-        </div>
-      ))}
+    <div className="flex w-full h-6 bg-gray-100 border-b border-gray-400">
+      {markers}
     </div>
   );
 };
