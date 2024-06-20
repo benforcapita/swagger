@@ -1,3 +1,7 @@
+/**
+ * Track component represents a track in the video editor.
+ * It allows users to add scenes, trim scenes, play/pause the video, and navigate through the scenes.
+ */
 import React, { useRef, useState, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import Preview from './Preview';
@@ -7,6 +11,9 @@ import { scenes } from '../consts';
 import SceneItem from './SceneItem';
 import Ruler from './Ruler';
 
+/**
+ * Track component
+ */
 const Track: React.FC = () => {
   const [droppedScenes, setDroppedScenes] = useState<DroppedScene[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -26,6 +33,10 @@ const Track: React.FC = () => {
     canDrop: () => mode === 'dnd', // Enable drop only in DnD mode
   });
 
+  /**
+   * Adds a scene to the track.
+   * @param id - The ID of the scene to add.
+   */
   const addSceneToTrack = (id: number) => {
     const scene = scenes.find(scene => scene.id === id);
     if (scene) {
@@ -34,6 +45,11 @@ const Track: React.FC = () => {
     }
   };
 
+  /**
+   * Moves a scene within the track.
+   * @param dragIndex - The index of the scene being dragged.
+   * @param hoverIndex - The index of the scene being hovered over.
+   */
   const moveScene = (dragIndex: number, hoverIndex: number) => {
     const dragScene = droppedScenes[dragIndex];
     const updatedScenes = [...droppedScenes];
@@ -42,6 +58,12 @@ const Track: React.FC = () => {
     setDroppedScenes(updatedScenes);
   };
 
+  /**
+   * Handles trimming of a scene.
+   * @param index - The index of the scene being trimmed.
+   * @param newLeftTrim - The new left trim value.
+   * @param newRightTrim - The new right trim value.
+   */
   const handleTrim = (index: number, newLeftTrim: number, newRightTrim: number) => {
     setDroppedScenes(prevScenes => {
       const updatedScenes = [...prevScenes];
@@ -51,6 +73,9 @@ const Track: React.FC = () => {
     });
   };
 
+  /**
+   * Handles the play/pause button click.
+   */
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
     if (videoRef.current) {
@@ -62,6 +87,9 @@ const Track: React.FC = () => {
     }
   };
 
+  /**
+   * Handles the end of a scene.
+   */
   const handleSceneEnd = () => {
     if (currentSceneIndex < droppedScenes.length - 1) {
       setCurrentSceneIndex(currentSceneIndex + 1);
@@ -71,18 +99,32 @@ const Track: React.FC = () => {
     }
   };
 
+  /**
+   * Handles the time update of the video.
+   * @param time - The current time of the video in seconds.
+   */
   const handleTimeUpdate = (time: number) => {
     setCurrentTime(time);
   };
 
+  /**
+   * Handles the zoom in button click.
+   */
   const handleZoomIn = () => {
     setZoomLevel(prevZoom => Math.min(prevZoom + 0.1, 2));
   };
 
+  /**
+   * Handles the zoom out button click.
+   */
   const handleZoomOut = () => {
     setZoomLevel(prevZoom => Math.max(prevZoom - 0.1, 0.5));
   };
 
+  /**
+   * Handles the track click event.
+   * @param e - The click event.
+   */
   const handleTrackClick = (e: React.MouseEvent) => {
     if (trackRef.current) {
       const boundingRect = trackRef.current.getBoundingClientRect();
@@ -114,57 +156,55 @@ const Track: React.FC = () => {
   }, [isPlaying]);
 
   return (
-    <>
-      <div className="p-4 border">
-        <div className="flex mb-4">
-          <button
-            className={`p-2 border ${mode === 'dnd' ? 'bg-blue-500 text-white' : ''}`}
-            onClick={() => setMode('dnd')}
-          >
-            Drag and Drop Mode
-          </button>
-          <button
-            className={`p-2 border ml-2 ${mode === 'trim' ? 'bg-blue-500 text-white' : ''}`}
-            onClick={() => setMode('trim')}
-          >
-            Trim Mode
-          </button>
-        </div>
-        <Ruler totalDuration={totalDuration} zoomLevel={zoomLevel} />
-        <div className={`track ${isOver ? 'bg-gray-200' : ''} p-4 border`} ref={drop} onClick={handleTrackClick} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div className="zoom-controls mb-4">
-            <button onClick={handleZoomOut} className="p-2 border mr-2">-</button>
-            <button onClick={handleZoomIn} className="p-2 border">+</button>
-          </div>
-          <div className="p-4 border track" ref={trackRef} style={{ width: '100%' }}>
-            {droppedScenes.map((scene, index) => (
-              <SceneItem
-                key={scene.uniqueId}
-                scene={scene}
-                index={index}
-                moveScene={moveScene}
-                zoomLevel={zoomLevel}
-                onTrim={handleTrim}
-                mode={mode}
-              />
-            ))}
-          </div>
-        </div>
-        <button onClick={handlePlayPause} className="mt-4 p-2 border">
-          {isPlaying ? 'Pause' : 'Play'}
+    <div className="track-container p-4 border">
+      <div className="mode-controls flex mb-4">
+        <button
+          className={`mode-button p-2 border ${mode === 'dnd' ? 'bg-blue-500 text-white' : ''}`}
+          onClick={() => setMode('dnd')}
+        >
+          Drag and Drop Mode
         </button>
-        <Cursor position={currentTime} trackWidth={trackRef.current?.clientWidth || 0} totalDuration={totalDuration} />
-        <Preview
-          sceneUrls={droppedScenes.map(scene => scene.url)}
-          currentSceneIndex={currentSceneIndex}
-          isPlaying={isPlaying}
-          onEnd={handleSceneEnd}
-          onTimeUpdate={handleTimeUpdate}
-          leftTrim={droppedScenes[currentSceneIndex]?.leftTrim ?? 0}
-          rightTrim={droppedScenes[currentSceneIndex]?.rightTrim ?? droppedScenes[currentSceneIndex]?.duration ?? 0}
-        />
+        <button
+          className={`mode-button p-2 border ml-2 ${mode === 'trim' ? 'bg-blue-500 text-white' : ''}`}
+          onClick={() => setMode('trim')}
+        >
+          Trim Mode
+        </button>
       </div>
-    </>
+      <Ruler totalDuration={totalDuration} zoomLevel={zoomLevel} />
+      <div className={`track ${isOver ? 'bg-gray-200' : ''} p-4 border`} ref={drop} onClick={handleTrackClick} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <div className="zoom-controls mb-4">
+          <button onClick={handleZoomOut} className="zoom-button p-2 border mr-2">-</button>
+          <button onClick={handleZoomIn} className="zoom-button p-2 border">+</button>
+        </div>
+        <div className="track-content p-4 border" ref={trackRef} style={{ width: '100%' }}>
+          {droppedScenes.map((scene, index) => (
+            <SceneItem
+              key={scene.uniqueId}
+              scene={scene}
+              index={index}
+              moveScene={moveScene}
+              zoomLevel={zoomLevel}
+              onTrim={handleTrim}
+              mode={mode}
+            />
+          ))}
+        </div>
+      </div>
+      <button onClick={handlePlayPause} className="play-button mt-4 p-2 border">
+        {isPlaying ? 'Pause' : 'Play'}
+      </button>
+      <Cursor position={currentTime} trackWidth={trackRef.current?.clientWidth || 0} totalDuration={totalDuration} />
+      <Preview
+        sceneUrls={droppedScenes.map(scene => scene.url)}
+        currentSceneIndex={currentSceneIndex}
+        isPlaying={isPlaying}
+        onEnd={handleSceneEnd}
+        onTimeUpdate={handleTimeUpdate}
+        leftTrim={droppedScenes[currentSceneIndex]?.leftTrim ?? 0}
+        rightTrim={droppedScenes[currentSceneIndex]?.rightTrim ?? droppedScenes[currentSceneIndex]?.duration ?? 0}
+      />
+    </div>
   );
 };
 

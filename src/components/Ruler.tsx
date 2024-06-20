@@ -1,3 +1,9 @@
+/**
+ * Renders a ruler component with markers indicating time intervals.
+ * @param totalDuration - The total duration of the ruler in seconds.
+ * @param zoomLevel - The zoom level of the ruler, affecting the spacing between markers.
+ * @returns The rendered ruler component.
+ */
 import React from 'react';
 
 const Ruler: React.FC<{ totalDuration: number; zoomLevel: number }> = ({ totalDuration, zoomLevel }) => {
@@ -19,7 +25,7 @@ const Ruler: React.FC<{ totalDuration: number; zoomLevel: number }> = ({ totalDu
   }
 
   return (
-    <div className="flex w-full h-6 bg-gray-100 border-b border-gray-400">
+    <div className="ruler flex w-full h-6 bg-gray-100 border-b border-gray-400">
       {markers}
     </div>
   );

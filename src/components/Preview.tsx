@@ -1,3 +1,17 @@
+/**
+ * Represents a preview component for displaying video scenes.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string[]} props.sceneUrls - The URLs of the video scenes.
+ * @param {number} props.currentSceneIndex - The index of the current scene.
+ * @param {boolean} props.isPlaying - Indicates whether the video is playing.
+ * @param {Function} props.onEnd - The callback function to be called when the video ends.
+ * @param {Function} props.onTimeUpdate - The callback function to be called when the video time updates.
+ * @param {number} props.leftTrim - The left trim value of the video.
+ * @param {number} props.rightTrim - The right trim value of the video.
+ * @returns {JSX.Element} The rendered Preview component.
+ */
 import React, { useEffect, useRef } from 'react';
 
 interface PreviewProps {
@@ -35,7 +49,7 @@ const Preview: React.FC<PreviewProps> = ({ sceneUrls, currentSceneIndex, isPlayi
   };
 
   return (
-    <div className="preview">
+    <div className="video-preview">
       <video
         ref={videoRef}
         src={sceneUrls[currentSceneIndex]}

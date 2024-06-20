@@ -1,5 +1,3 @@
-/* src/styles/tailwind.css */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,22 +15,30 @@
 }
 
 .track {
-    @apply mt-4 p-4 border border-red-500 flex flex-row items-center w-full;
+  @apply mt-4 p-4 border border-red-500;
 }
 
 .track-item {
-  @apply p-2 border border-yellow-500 mb-2 relative;
+  @apply p-2 border border-yellow-500 mb-2;
 }
 
-.zoom-controls {
-  @apply mb-4 flex;
+.ruler {
+  @apply flex mt-4 border border-purple-500;
+}
+
+.ruler-second {
+  @apply w-8 border-r border-gray-500 text-center;
+}
+
+.preview {
+  @apply h-64 border border-orange-500 flex items-center justify-center;
 }
 
 .cursor {
   @apply mt-4 border border-pink-500;
 }
 
-.cursor div {
+.cursor-marker {
   @apply w-1 bg-red-500 h-8;
 }
 
@@ -44,14 +50,34 @@
   @apply p-2 border border-teal-500 mb-2;
 }
 
-.preview {
-  @apply h-64 border border-orange-500 flex items-center justify-center;
+.mode-controls {
+  @apply flex mb-4;
 }
 
-.ruler {
-  @apply flex mt-4 border border-purple-500;
+.mode-button {
+  @apply p-2 border;
 }
 
-.ruler-second {
-  @apply w-8 border-r border-gray-500 text-center;
+.zoom-controls {
+  @apply mb-4;
+}
+
+.zoom-button {
+  @apply p-2 border;
+}
+
+.track-content {
+  @apply p-4 border;
+}
+
+.play-button {
+  @apply mt-4 p-2 border;
+}
+
+.scene-content {
+  @apply relative bg-blue-300;
+}
+
+.left-trim-handle, .right-trim-handle {
+  @apply absolute top-0 h-full w-2 bg-gray-500 cursor-ew-resize;
 }

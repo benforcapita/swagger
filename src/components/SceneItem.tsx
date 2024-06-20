@@ -1,7 +1,24 @@
+
+
 import { useRef, useState, useEffect } from "react";
 import { SceneItemProps } from "../interfaces/SceneItemProps";
 import { useDrag, useDrop } from "react-dnd";
 
+
+
+/**
+ * Represents a scene item in the video editor.
+ *
+ * @component
+ * @param {SceneItemProps} props - The props for the SceneItem component.
+ * @param {Scene} props.scene - The scene object.
+ * @param {number} props.index - The index of the scene item.
+ * @param {Function} props.moveScene - The function to move the scene item.
+ * @param {number} props.zoomLevel - The zoom level of the video editor.
+ * @param {Function} props.onTrim - The function to handle trimming of the scene item.
+ * @param {string} props.mode - The mode of the video editor.
+ * @returns {JSX.Element} The rendered SceneItem component.
+ */
 const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLevel, onTrim, mode }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
@@ -111,30 +128,29 @@ const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLeve
   return (
     <div
       ref={ref}
-      className={`relative track-item p-2 border mb-2 ${isDragging ? 'opacity-50' : ''}`}
+      className={`relative track-item ${isDragging ? 'opacity-50' : ''}`}
       style={{ width: '100%', transform: `scaleX(${zoomLevel})`, position: 'relative' }}
     >
-
       <div
-        className="relative bg-blue-300"
+        className="relative scene-content bg-blue-300"
         style={{
           marginLeft: `${leftTrimPercentage}%`,
           width: `${trimPercentage}%`,
         }}
       >
-              {mode === 'trim' && (
-        <div id="left-trim-handle"
-          className="absolute left-0  top-0  h-full w-2 bg-gray-500 cursor-ew-resize"
-          style={{ left: 0, zIndex: isResizing ? 1 : 0 }}
-          onMouseDown={(e) => handleMouseDown(e, 'left')}
-        />
-      )}
+        {mode === 'trim' && (
+          <div
+            className="absolute left-trim-handle left-0 top-0 h-full w-2 bg-gray-500 cursor-ew-resize"
+            style={{ zIndex: isResizing ? 1 : 0 }}
+            onMouseDown={(e) => handleMouseDown(e, 'left')}
+          />
+        )}
         <p className="text-center">{scene.name} (Duration: {trimmedDuration.toFixed(2)}s)</p>
         {mode === 'trim' && (
-          <div id="right-trim-handle"
-            className="absolute right-0 top-0 h-full w-2 bg-gray-500 cursor-ew-resize"
+          <div
+            className="absolute right-trim-handle right-0 top-0 h-full w-2 bg-gray-500 cursor-ew-resize"
+            style={{ zIndex: isResizing ? 1 : 0 }}
             onMouseDown={(e) => handleMouseDown(e, 'right')}
-            style={{ right: 0, zIndex: isResizing ? 1 : 0 }}
           />
         )}
       </div>
