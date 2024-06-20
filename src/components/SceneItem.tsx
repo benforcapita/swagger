@@ -5,10 +5,10 @@ import { useDrag, useDrop } from "react-dnd";
 const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLevel, onTrim, mode }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
-  const [leftTrim, setLeftTrim] = useState(0);
-  const [rightTrim, setRightTrim] = useState(scene.duration);
-  const [initialLeftTrim, setInitialLeftTrim] = useState(0);
-  const [initialRightTrim, setInitialRightTrim] = useState(scene.duration);
+  const [leftTrim, setLeftTrim] = useState(scene.leftTrim || 0);
+  const [rightTrim, setRightTrim] = useState(scene.rightTrim || scene.duration);
+  const [initialLeftTrim, setInitialLeftTrim] = useState(scene.leftTrim || 0);
+  const [initialRightTrim, setInitialRightTrim] = useState(scene.rightTrim || scene.duration);
 
   const [, drop] = useDrop({
     accept: 'sceneItem',
@@ -83,8 +83,7 @@ const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLeve
 
     const handleMouseUp = () => {
       setIsResizing(false);
-      const newDuration = rightTrim - leftTrim;
-      onTrim(index, newDuration);
+      onTrim(index, leftTrim, rightTrim);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
@@ -97,6 +96,13 @@ const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLeve
     setRightTrim(scene.duration);
   }, [scene.duration]);
 
+  useEffect(() => {
+    if (!isResizing) {
+      setInitialLeftTrim(leftTrim);
+      setInitialRightTrim(rightTrim);
+    }
+  }, [isResizing, leftTrim, rightTrim]);
+
   const fullDuration = scene.duration;
   const trimmedDuration = rightTrim - leftTrim;
   const trimPercentage = (trimmedDuration / fullDuration) * 100;
@@ -108,13 +114,7 @@ const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLeve
       className={`relative track-item p-2 border mb-2 ${isDragging ? 'opacity-50' : ''}`}
       style={{ width: '100%', transform: `scaleX(${zoomLevel})`, position: 'relative' }}
     >
-      {mode === 'trim' && (
-        <div
-          className="absolute left-0 h-full bg-gray-500 cursor-ew-resize top-0"
-          style={{ width: `${leftTrimPercentage}%`, zIndex: isResizing ? 1 : 0 }}
-          onMouseDown={(e) => handleMouseDown(e, 'left')}
-        />
-      )}
+
       <div
         className="relative bg-blue-300"
         style={{
@@ -122,22 +122,22 @@ const SceneItem: React.FC<SceneItemProps> = ({ scene, index, moveScene, zoomLeve
           width: `${trimPercentage}%`,
         }}
       >
-        {scene.name} (Duration: {trimmedDuration.toFixed(2)}s)
+              {mode === 'trim' && (
+        <div id="left-trim-handle"
+          className="absolute left-0  top-0  h-full w-2 bg-gray-500 cursor-ew-resize"
+          style={{ left: 0, zIndex: isResizing ? 1 : 0 }}
+          onMouseDown={(e) => handleMouseDown(e, 'left')}
+        />
+      )}
+        <p className="text-center">{scene.name} (Duration: {trimmedDuration.toFixed(2)}s)</p>
         {mode === 'trim' && (
-          <div
+          <div id="right-trim-handle"
             className="absolute right-0 top-0 h-full w-2 bg-gray-500 cursor-ew-resize"
             onMouseDown={(e) => handleMouseDown(e, 'right')}
-            style={{ zIndex: isResizing ? 1 : 0 }}
+            style={{ right: 0, zIndex: isResizing ? 1 : 0 }}
           />
         )}
       </div>
-      {mode === 'trim' && (
-        <div
-          className="absolute right-0 h-full bg-gray-500 cursor-ew-resize top-0"
-          style={{ width: `${(1 - rightTrim / fullDuration) * 100}%`, right: 0, zIndex: isResizing ? 1 : 0 }}
-          onMouseDown={(e) => handleMouseDown(e, 'right')}
-        />
-      )}
     </div>
   );
 };

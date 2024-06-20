@@ -17,23 +17,15 @@
 }
 
 .track {
-  @apply mt-4 p-4 border border-red-500;
+    @apply mt-4 p-4 border border-red-500 flex flex-row items-center w-full;
 }
 
 .track-item {
-  @apply p-2 border border-yellow-500 mb-2;
+  @apply p-2 border border-yellow-500 mb-2 relative;
 }
 
-.ruler {
-  @apply flex mt-4 border border-purple-500;
-}
-
-.ruler-second {
-  @apply w-8 border-r border-gray-500 text-center;
-}
-
-.preview {
-  @apply h-64 border border-orange-500 flex items-center justify-center;
+.zoom-controls {
+  @apply mb-4 flex;
 }
 
 .cursor {
@@ -50,4 +42,8 @@
 
 .scene-item {
   @apply p-2 border border-teal-500 mb-2;
+}
+
+.preview {
+  @apply h-64 border border-orange-500 flex items-center justify-center;
 }

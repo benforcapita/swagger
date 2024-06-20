@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface PreviewProps {
   sceneUrls: string[];
@@ -26,24 +26,25 @@ const Preview: React.FC<PreviewProps> = ({ sceneUrls, currentSceneIndex, isPlayi
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      if (currentTime >= rightTrim) {
+      onTimeUpdate(videoRef.current.currentTime);
+      if (videoRef.current.currentTime >= rightTrim) {
         videoRef.current.pause();
         onEnd();
-      } else {
-        onTimeUpdate(currentTime);
       }
     }
   };
 
   return (
-    <video
-      ref={videoRef}
-      src={sceneUrls[currentSceneIndex]}
-      onTimeUpdate={handleTimeUpdate}
-      onEnded={onEnd}
-      controls
-    />
+    <div className="preview">
+      <video
+        ref={videoRef}
+        src={sceneUrls[currentSceneIndex]}
+        onTimeUpdate={handleTimeUpdate}
+        onEnded={onEnd}
+        controls
+        className="w-full h-full"
+      />
+    </div>
   );
 };
 

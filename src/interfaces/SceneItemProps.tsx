@@ -5,6 +5,6 @@ export interface SceneItemProps {
   index: number;
   moveScene: (dragIndex: number, hoverIndex: number) => void;
   zoomLevel: number;
-  onTrim: (index: number, newDuration: number) => void;
+  onTrim: (index: number, newDuration: number,newRightTrim: number) => void;
   mode: 'dnd' | 'trim'; // Add mode prop
 }

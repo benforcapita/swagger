@@ -3,14 +3,8 @@ import { useDrop } from 'react-dnd';
 import Preview from './Preview';
 import Cursor from './Cursor';
 import { DroppedScene } from '../interfaces/DroppedScene';
-import { Scene } from '../interfaces/Scene';
 import SceneItem from './SceneItem';
-
-const scenes: Scene[] = [
-  { id: 1, name: 'Scene 1', duration: 3, url: '/videos/1.mp4' },
-  { id: 2, name: 'Scene 2', duration: 4.2, url: '/videos/2.mp4' },
-  { id: 3, name: 'Scene 3', duration: 5.5, url: '/videos/3.mp4' },
-];
+import { scenes } from '../consts';
 
 const Track: React.FC = () => {
   const [droppedScenes, setDroppedScenes] = useState<DroppedScene[]>([]);
@@ -27,7 +21,7 @@ const Track: React.FC = () => {
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
-    canDrop: () => mode === 'dnd',
+    canDrop: () => mode === 'dnd', // Enable drop only in DnD mode
   });
 
   const addSceneToTrack = (id: number) => {
@@ -46,10 +40,10 @@ const Track: React.FC = () => {
     setDroppedScenes(updatedScenes);
   };
 
-  const handleTrim = (index: number, newDuration: number) => {
+  const handleTrim = (index: number, newLeftTrim: number, newRightTrim: number) => {
     setDroppedScenes(prevScenes => {
       const updatedScenes = [...prevScenes];
-      const trimmedScene = { ...updatedScenes[index], duration: newDuration };
+      const trimmedScene = { ...updatedScenes[index], leftTrim: newLeftTrim, rightTrim: newRightTrim };
       updatedScenes[index] = trimmedScene;
       return updatedScenes;
     });
@@ -84,13 +78,13 @@ const Track: React.FC = () => {
     if (trackRef.current) {
       const boundingRect = trackRef.current.getBoundingClientRect();
       const clickX = e.clientX - boundingRect.left;
-      const totalDuration = droppedScenes.reduce((acc, scene) => acc + scene.duration, 0);
+      const totalDuration = droppedScenes.reduce((acc, scene) => acc + (scene.rightTrim - scene.leftTrim), 0);
       const newTime = (clickX / boundingRect.width) * totalDuration;
       setCurrentTime(newTime);
       // Find the corresponding scene index
       let accumulatedDuration = 0;
       for (let i = 0; i < droppedScenes.length; i++) {
-        accumulatedDuration += droppedScenes[i].duration;
+        accumulatedDuration += droppedScenes[i].rightTrim - droppedScenes[i].leftTrim;
         if (newTime <= accumulatedDuration) {
           setCurrentSceneIndex(i);
           break;
@@ -99,11 +93,16 @@ const Track: React.FC = () => {
     }
   };
 
-  const totalDuration = droppedScenes.reduce((acc, scene) => acc + scene.duration, 0);
+  const totalDuration = droppedScenes.reduce((acc, scene) => acc + (scene.rightTrim - scene.leftTrim), 0);
 
   return (
-    <div className="p-4 border">
-      <div className="flex mb-4">
+  <>
+   <div className={`track ${isOver ? 'bg-gray-200' : ''} p-4 border`} ref={drop} onClick={handleTrackClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="zoom-controls mb-4">
+          <button onClick={handleZoomOut} className="p-2 border mr-2">-</button>
+          <button onClick={handleZoomIn} className="p-2 border">+</button>
+        </div>
+        <div className="flex mb-4">
         <button
           className={`p-2 border ${mode === 'dnd' ? 'bg-blue-500 text-white' : ''}`}
           onClick={() => setMode('dnd')}
@@ -117,11 +116,9 @@ const Track: React.FC = () => {
           Trim Mode
         </button>
       </div>
-      <div className={`track ${isOver ? 'bg-gray-200' : ''} p-4 border`} ref={drop} onClick={handleTrackClick}>
-        <div className="zoom-controls mb-4">
-          <button onClick={handleZoomOut} className="p-2 border mr-2">-</button>
-          <button onClick={handleZoomIn} className="p-2 border">+</button>
-        </div>
+    <div className="p-4 border track">
+  
+     
         {droppedScenes.map((scene, index) => (
           <SceneItem
             key={scene.uniqueId}
@@ -133,21 +130,22 @@ const Track: React.FC = () => {
             mode={mode}
           />
         ))}
-        <button onClick={handlePlayPause} className="mt-4 p-2 border">
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
-        <Cursor position={currentTime} trackWidth={trackRef.current?.clientWidth || 0} totalDuration={totalDuration} />
-        <Preview
-          sceneUrls={droppedScenes.map(scene => scene.url)}
-          currentSceneIndex={currentSceneIndex}
-          isPlaying={isPlaying}
-          onEnd={handleSceneEnd}
-          onTimeUpdate={handleTimeUpdate}
-          leftTrim={droppedScenes[currentSceneIndex]?.leftTrim ?? 0}
-          rightTrim={droppedScenes[currentSceneIndex]?.rightTrim ?? droppedScenes[currentSceneIndex]?.duration ?? 0}
-        />
       </div>
+      <button onClick={handlePlayPause} className="mt-4 p-2 border">
+        {isPlaying ? 'Pause' : 'Play'}
+      </button>
+      <Cursor position={currentTime} trackWidth={trackRef.current?.clientWidth || 0} totalDuration={totalDuration} />
+      <Preview
+        sceneUrls={droppedScenes.map(scene => scene.url)}
+        currentSceneIndex={currentSceneIndex}
+        isPlaying={isPlaying}
+        onEnd={handleSceneEnd}
+        onTimeUpdate={handleTimeUpdate}
+        leftTrim={droppedScenes[currentSceneIndex]?.leftTrim ?? 0}
+        rightTrim={droppedScenes[currentSceneIndex]?.rightTrim ?? droppedScenes[currentSceneIndex]?.duration ?? 0}
+      />
     </div>
+    </>
   );
 };
 
