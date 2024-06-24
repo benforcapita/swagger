@@ -40,18 +40,28 @@ class VideoEditorStore {
     this.isPlaying = !this.isPlaying;
   }
 
-  handleSceneEnd() {
-    if (this.currentSceneIndex < this.droppedScenes.length - 1) {
-      this.currentSceneIndex += 1;
-    } else {
-      this.isPlaying = false;
-      this.currentSceneIndex = 0;
-    }
-  }
-
   handleTimeUpdate(time: number) {
     this.currentTime = time;
   }
+
+  handleSceneEnd() {
+    this.isPlaying = false;
+    this.currentSceneIndex = 0;
+    this.currentTime = 0;
+  }
+
+  setPlaying(playing: boolean) {
+    this.isPlaying = playing;
+  }
+
+  setCurrentSceneIndex(index: number) {
+    this.currentSceneIndex = index;
+  }
+
+  setDroppedScenes(scenes: DroppedScene[]) {
+    this.droppedScenes = scenes;
+  }
+
 
   handleZoomIn() {
     this.zoomLevel = Math.min(this.zoomLevel + 0.1, 2);
@@ -84,3 +94,6 @@ class VideoEditorStore {
 
 const videoEditorStore = new VideoEditorStore();
 export default videoEditorStore;
+
+
+

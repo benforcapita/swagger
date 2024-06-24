@@ -4,14 +4,24 @@ import { observer } from 'mobx-react-lite';
 import { SceneItemProps } from '../interfaces/SceneItemProps';
 import videoEditorStore from './stores/VideoEditorStore';
 
+/**
+ * Represents a single scene item in the video editor.
+ * @component 
+ * @param {SceneItemProps} props - The properties of the scene item component.
+ * @returns {JSX.Element}
+ * 
+ */
 const SceneItem: React.FC<SceneItemProps> = observer(({ scene, index }) => {
   const ref = useRef<HTMLDivElement>(null);
+
+  // Drag and drop functionality
   const [{ isDragging }, drag] = useDrag({
     type: 'sceneItem',
     item: { index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
-    }),    canDrag: () => videoEditorStore.mode === 'dnd',
+    }),
+    canDrag: () => videoEditorStore.mode === 'dnd',
   });
 
   const [, drop] = useDrop({
@@ -27,6 +37,11 @@ const SceneItem: React.FC<SceneItemProps> = observer(({ scene, index }) => {
 
   drag(drop(ref));
 
+  /**
+   * Handles the mouse down event on the left or right trim handle.
+   * @param e - The mouse event
+   * @param handle - The handle to be dragged ('left' or 'right')
+   */
   const handleMouseDown = (e: React.MouseEvent, handle: 'left' | 'right') => {
     if (videoEditorStore.mode !== 'trim') return;
 

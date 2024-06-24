@@ -2,32 +2,72 @@ import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import videoEditorStore from './stores/VideoEditorStore';
 
+// Preview component
+/**
+ * Component that displays a preview of the video editor.
+ * It plays the video with the scenes added by the user.
+ * It updates the current scene based on the video time.
+ * It handles the end of the video and stops playback.
+ * It resets the current scene index when playback is stopped.
+ * @component
+ * @observer
+ * @returns {JSX.Element}
+ * 
+ */
 const Preview: React.FC = observer(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { droppedScenes, currentSceneIndex, isPlaying, handleTimeUpdate, handleSceneEnd } = videoEditorStore;
+  const { droppedScenes, isPlaying, handleTimeUpdate, handleSceneEnd } = videoEditorStore;
+  const [currentSegmentIndex, setCurrentSegmentIndex] = React.useState(0);
 
   useEffect(() => {
-    if (videoRef.current && droppedScenes[currentSceneIndex]) {
-      videoRef.current.currentTime = droppedScenes[currentSceneIndex].leftTrim;
+    if (videoRef.current && droppedScenes[currentSegmentIndex]) {
+      videoRef.current.src = droppedScenes[currentSegmentIndex].url;
+      videoRef.current.currentTime = droppedScenes[currentSegmentIndex].leftTrim;
       if (isPlaying) {
         videoRef.current.play();
       } else {
         videoRef.current.pause();
       }
     }
-  }, [currentSceneIndex, isPlaying, droppedScenes]);
+  }, [currentSegmentIndex, isPlaying, droppedScenes]);
 
   const handleTimeUpdateWrapper = () => {
     if (videoRef.current) {
+      const currentScene = droppedScenes[currentSegmentIndex];
       handleTimeUpdate(videoRef.current.currentTime);
-      if (videoRef.current.currentTime >= droppedScenes[currentSceneIndex].rightTrim) {
-        videoRef.current.pause();
-        handleSceneEnd();
+
+      if (videoRef.current.currentTime >= currentScene.rightTrim) {
+        if (currentSegmentIndex < droppedScenes.length - 1) {
+          setCurrentSegmentIndex(currentSegmentIndex + 1);
+        } else {
+          videoRef.current.pause();
+          handleSceneEnd();
+        }
       }
     }
   };
 
-  if (droppedScenes.length === 0 || !droppedScenes[currentSceneIndex]) {
+  const handleEnded = () => {
+    if (currentSegmentIndex < droppedScenes.length - 1) {
+      setCurrentSegmentIndex(currentSegmentIndex + 1);
+    } else {
+      handleSceneEnd();
+    }
+  };
+
+  useEffect(() => {
+    if (!isPlaying) {
+      setCurrentSegmentIndex(0);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (videoRef.current && droppedScenes[currentSegmentIndex]) {
+      videoRef.current.currentTime = droppedScenes[currentSegmentIndex].leftTrim;
+    }
+  }, [currentSegmentIndex, droppedScenes]);
+
+  if (droppedScenes.length === 0 || !droppedScenes[currentSegmentIndex]) {
     return <div className="video-preview">No scenes available</div>;
   }
 
@@ -35,9 +75,8 @@ const Preview: React.FC = observer(() => {
     <div className="video-preview">
       <video
         ref={videoRef}
-        src={droppedScenes[currentSceneIndex].url}
         onTimeUpdate={handleTimeUpdateWrapper}
-        onEnded={handleSceneEnd}
+        onEnded={handleEnded}
         controls
         className="w-full h-full"
       />
