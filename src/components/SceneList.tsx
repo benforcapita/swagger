@@ -1,35 +1,10 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { useDrag } from 'react-dnd';
+import videoEditorStore from './stores/VideoEditorStore';
+import { Scene } from '../interfaces/Scene';
 
-/**
- * Represents a scene in the video editor.
- */
-interface Scene {
-  id: number;
-  name: string;
-  duration: number;
-}
-
-/**
- * An array of scenes.
- */
-const scenes: Scene[] = [
-  { id: 1, name: 'Scene 1', duration: 3 },
-  { id: 2, name: 'Scene 2', duration: 4.2 },
-  { id: 3, name: 'Scene 3', duration: 5.5 },
-];
-
-/**
- * Props for the SceneItem component.
- */
-interface SceneItemProps {
-  scene: Scene;
-}
-
-/**
- * A single scene item in the scene list.
- */
-const SceneItem: React.FC<SceneItemProps> = ({ scene }) => {
+const SceneItem: React.FC<{ scene: Scene }> = ({ scene }) => {
   const [, drag] = useDrag(() => ({
     type: 'scene',
     item: { id: scene.id },
@@ -42,17 +17,14 @@ const SceneItem: React.FC<SceneItemProps> = ({ scene }) => {
   );
 };
 
-/**
- * The scene list component.
- */
-const SceneList: React.FC = () => {
+const SceneList: React.FC = observer(() => {
   return (
     <div className="scene-list">
-      {scenes.map(scene => (
+      {videoEditorStore.scenes.map((scene) => (
         <SceneItem key={scene.id} scene={scene} />
       ))}
     </div>
   );
-};
+});
 
 export default SceneList;

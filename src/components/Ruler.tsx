@@ -1,25 +1,19 @@
-/**
- * Renders a ruler component with markers indicating time intervals.
- * @param totalDuration - The total duration of the ruler in seconds.
- * @param zoomLevel - The zoom level of the ruler, affecting the spacing between markers.
- * @returns The rendered ruler component.
- */
 import React from 'react';
+import { observer } from 'mobx-react-lite';
+import videoEditorStore from './stores/VideoEditorStore';
 
-const Ruler: React.FC<{ totalDuration: number; zoomLevel: number }> = ({ totalDuration, zoomLevel }) => {
+const Ruler: React.FC = observer(() => {
   const markers = [];
-  const markerWidth = 50 * zoomLevel; // Adjust marker spacing based on zoom level
+  const markerWidth = 50 * videoEditorStore.zoomLevel;
 
-  for (let i = 0; i <= totalDuration; i++) {
+  for (let i = 0; i <= videoEditorStore.totalDuration; i++) {
     markers.push(
       <div
         key={i}
         className="flex flex-grow border-r border-gray-300 text-xs text-center items-center justify-center"
         style={{ width: `${markerWidth}px` }}
       >
-        <div >
-          {i}s
-        </div>
+        <div>{i}s</div>
       </div>
     );
   }
@@ -29,6 +23,6 @@ const Ruler: React.FC<{ totalDuration: number; zoomLevel: number }> = ({ totalDu
       {markers}
     </div>
   );
-};
+});
 
 export default Ruler;

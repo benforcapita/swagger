@@ -1,35 +1,9 @@
-
 import React from 'react';
+import { observer } from 'mobx-react-lite';
+import videoEditorStore from './stores/VideoEditorStore';
 
-/**
- * Represents a cursor component that indicates the current position on a track.
- */
-interface CursorProps {
-  /**
-   * The position of the cursor in seconds.
-   */
-  position: number;
-  
-  /**
-   * The width of the track in pixels.
-   */
-  trackWidth: number;
-  
-  /**
-   * The total duration of all scenes in seconds.
-   */
-  totalDuration: number;
-}
-
-/**
- * Renders a cursor component based on the provided position, track width, and total duration.
- * @param position - The position of the cursor in seconds.
- * @param trackWidth - The width of the track in pixels.
- * @param totalDuration - The total duration of all scenes in seconds.
- * @returns The rendered cursor component.
- */
-const Cursor: React.FC<CursorProps> = ({ position, trackWidth, totalDuration }) => {
-  const cursorPosition = (position / totalDuration) * trackWidth;
+const Cursor: React.FC = observer(() => {
+  const cursorPosition = (videoEditorStore.currentTime / videoEditorStore.totalDuration) * videoEditorStore.trackWidth;
 
   return (
     <div className="relative">
@@ -39,6 +13,6 @@ const Cursor: React.FC<CursorProps> = ({ position, trackWidth, totalDuration }) 
       />
     </div>
   );
-};
+});
 
 export default Cursor;
