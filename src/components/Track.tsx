@@ -7,6 +7,13 @@ import SceneItem from './SceneItem';
 import Ruler from './Ruler';
 import videoEditorStore from './stores/VideoEditorStore';
 
+/**
+ * Track component represents a track in the video editor.
+ * It allows scenes to be dropped onto it and displays the scenes in a timeline-like manner.
+ */
+
+// Track component
+ 
 const Track: React.FC = observer(() => {
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -34,7 +41,7 @@ const Track: React.FC = observer(() => {
   const totalDuration = videoEditorStore.totalDuration;
 
   return (
-    <div className="track-container p-4 border">
+    <div id='Track' className="track-container p-4 border">
       <div className="mode-controls flex mb-4">
         <button
           className={`mode-button p-2 border ${videoEditorStore.mode === 'dnd' ? 'bg-blue-500 text-white' : ''}`}

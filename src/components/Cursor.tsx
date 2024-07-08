@@ -2,6 +2,9 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import videoEditorStore from './stores/VideoEditorStore';
 
+/**
+ * Represents the cursor component that shows the current position in the video editor.
+ */
 const Cursor: React.FC = observer(() => {
   const cursorPosition = (videoEditorStore.currentTime / videoEditorStore.totalDuration) * videoEditorStore.trackWidth;
 

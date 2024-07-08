@@ -4,6 +4,10 @@ import { useDrag } from 'react-dnd';
 import videoEditorStore from './stores/VideoEditorStore';
 import { Scene } from '../interfaces/Scene';
 
+/**
+ * Represents a single scene item in the scene list.
+ * @param scene - The scene object containing information about the scene.
+ */
 const SceneItem: React.FC<{ scene: Scene }> = ({ scene }) => {
   const [, drag] = useDrag(() => ({
     type: 'scene',

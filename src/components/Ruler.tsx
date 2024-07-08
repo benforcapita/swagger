@@ -2,6 +2,10 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import videoEditorStore from './stores/VideoEditorStore';
 
+/**
+ * Ruler component displays markers representing time intervals.
+ * It calculates the marker width based on the zoom level and renders the markers accordingly.
+ */
 const Ruler: React.FC = observer(() => {
   const markers = [];
   const markerWidth = 50 * videoEditorStore.zoomLevel;
